@@ -1,0 +1,2 @@
+rsync -avzHhi root@vco:/usr/local/Analog* /usr/local/ &> rsynclog-0627
+rsync -avzHhi root@vco:/usr/local/cmos* /usr/local/ &> rsynclog-0627-2
