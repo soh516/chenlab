@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# disable user list at login
+gconftool-2 --direct --config-source=xml:readwrite:/etc/gconf/gconf.xml.defaults --type bool --set /apps/gdm/simple-greeter/disable_user_list true
+
+# mount home and cmc
+if [ ! -d "/CMC" ]; then
+   mkdir /CMC
+fi
+
+echo "engrcmc.usask.ca:/CMC   /CMC                    nfs     defaults,_netdev   0  0" >> /etc/fstab
+echo "engrcmc-home:/home      /home                   nfs     defaults,_netdev,vers=3   0  0" >> /etc/fstab
+
+mount -a
+
+# kerberos
+authconfig --enablekrb5 --update --krb5realm=USASK.CA --krb5kdc=usaskdc5.usask.ca,usaskdc2.usask.ca,usaskdc6.usask.ca 
+
+# install packages
+#cadence (Experience from RH6)
+yum -y install glibc.i686
+yum -y install libXt.i686
+yum -y install libXext.i686
+yum -y install libXp.i686
+yum -y install libXp.x86_64
+yum -y install xorg-x11-fonts-ISO8859-1-75dpi
+yum -y install ksh
+yum -y install compat-libtermcap
+yum -y install compat-libtermcap.i686
+yum -y install compat-libstdc++-33
+yum -y install compat-readline5.x86_64
+yum -y install libgcc.i686
+
+#synopsys (Experience from RH7)
+yum -y install ncurses-libs.i686
+yum -y install libXrender.i686
+yum -y install libXrandr.i686
+yum -y install libXi.i686
+yum -y install fontconfig.i686
+
+#dc shell and vcs (Experience from RH7)
+yum -y install zlib.i686
+yum -y install glibc-devel.i686
+
+#dc shell (Experience from RH6)
+yum -y install libXft-2.3.2-1.el6.i686
+yum -y install libjpeg-turbo-1.2.1-3.el6_5.i686
+yum -y install 2:libpng-1.2.49-2.el6_7.i686
+
+#extra
+yum -y install cpp.x86_64
+
+#yum-cron
+yum -y install yum-cron
+chkconfig yum-cron on
+service yum-cron start
+
+#latest virtuoso
+yum -y install openssl098e-0.9.8e-20.el6_7.1.i686
+yum -y install openssl098e-0.9.8e-20.el6_7.1
+
+# install packages for nfs and sssd 
+yum -y install nfs-utils samba sssd-ad sssd-krb5 sssd-ldap cyrus-sasl-gssapi 
+yum -y install sssd-client.i686 
+
+# simulation issue
+yum -y install elfutils-devel
+yum -y install elfutils-devel.i686
+
+# mount home and cmc
+if [ ! -d "/mnt/eceappinstall" ]; then
+   mkdir -p /mnt/eceappinstall
+fi
+
+mount oneplus2:/var/www/html/repo /mnt/eceappinstall
+
+\cp /mnt/eceappinstall/conffiles/smb.conf /etc/samba/
+
+net ads join -U soh516 createcomputer=ResearchComputingOU/ENGRCMCOU
+
+echo "SECURE_NFS="yes"" >> /etc/sysconfig/nfs
+/sbin/chkconfig rpcgssd on 
+/sbin/service rpcgssd start 
+
+# mount nfsfiles testing
+mount -t nfs4 -o sec=krb5,exec nfsfiles.usask.ca:/ /mnt 
+ls -al /mnt
+umount /mnt
+
+umount /mnt/eceappinstall
