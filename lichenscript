@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if grep -q ONBOOT=no /etc/sysconfig/network-scripts/ifcfg-eth0; then
+sed -i -e 's/ONBOOT=no/ONBOOT=yes/g' /etc/sysconfig/network-scripts/ifcfg-eth0
+fi
+
+
+
 # disable user list at login
 gconftool-2 --direct --config-source=xml:readwrite:/etc/gconf/gconf.xml.defaults --type bool --set /apps/gdm/simple-greeter/disable_user_list true
 
