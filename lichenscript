@@ -92,4 +92,4 @@ useradd -a -G wheel ijm451
 # check /etc/fstab. There is a home sometime. Uncomment it
 # mount -a
 # edit /etc/sudoers for no passwd 
-
+# edit /etc/group for cmc stuff
