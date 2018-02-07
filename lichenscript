@@ -15,9 +15,8 @@ if [ ! -d "/CMC" ]; then
 fi
 
 echo "engrcmc.usask.ca:/CMC   /CMC                    nfs     defaults,_netdev   0  0" >> /etc/fstab
-echo "engrcmc-home:/home      /home                   nfs     defaults,_netdev,vers=3   0  0" >> /etc/fstab
+echo "nfsfiles.usask.ca:/home /home nfs sec=krb5,exec,vers=3,_netdev 0 0" >> /etc/fstab
 
-mount -a
 
 # kerberos
 authconfig --enablekrb5 --update --krb5realm=USASK.CA --krb5kdc=usaskdc5.usask.ca,usaskdc2.usask.ca,usaskdc6.usask.ca 
@@ -73,14 +72,12 @@ yum -y install sssd-client.i686
 yum -y install elfutils-devel
 yum -y install elfutils-devel.i686
 
-# mount home and cmc
-if [ ! -d "/mnt/eceappinstall" ]; then
-   mkdir -p /mnt/eceappinstall
-fi
 
-mount oneplus2:/var/www/html/repo /mnt/eceappinstall
-
-\cp /mnt/eceappinstall/conffiles/smb.conf /etc/samba/
+\cp ./lichenconffiles/smb.conf /etc/samba/
+\cp ./lichenconffiles/sssd.conf /etc/sssd/
+\cp ./lichenconffiles/profile /etc/
+\cp ./lichenconffiles/nsswitch.conf /etc/
+\cp ./lichenconffiles/idmapd.conf /etc/
 
 net ads join -U soh516 createcomputer=ResearchComputingOU/ENGRCMCOU
 
@@ -88,9 +85,11 @@ echo "SECURE_NFS="yes"" >> /etc/sysconfig/nfs
 /sbin/chkconfig rpcgssd on 
 /sbin/service rpcgssd start 
 
-# mount nfsfiles testing
-mount -t nfs4 -o sec=krb5,exec nfsfiles.usask.ca:/ /mnt 
-ls -al /mnt
-umount /mnt
+useradd -a -G wheel soh516
+useradd -a -G wheel ijm451
 
-umount /mnt/eceappinstall
+# do followings manually
+# check /etc/fstab. There is a home sometime. Uncomment it
+# mount -a
+# edit /etc/sudoers for no passwd 
+
