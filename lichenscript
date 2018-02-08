@@ -90,8 +90,8 @@ echo "SECURE_NFS="yes"" >> /etc/sysconfig/nfs
 chkconfig sssd on
 service sssd start
 
-useradd -a -G wheel soh516
-useradd -a -G wheel ijm451
+usermod -a -G wheel soh516
+usermod -a -G wheel ijm451
 
 # do followings manually
 # check /etc/fstab. There is a home sometime. Uncomment it
