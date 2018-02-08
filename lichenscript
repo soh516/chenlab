@@ -79,11 +79,16 @@ yum -y install elfutils-devel.i686
 \cp ./lichenconffiles/nsswitch.conf /etc/
 \cp ./lichenconffiles/idmapd.conf /etc/
 
+chmod 0700 /etc/sssd/sssd.conf
+
 net ads join -U soh516 createcomputer=ResearchComputingOU/ENGRCMCOU
 
 echo "SECURE_NFS="yes"" >> /etc/sysconfig/nfs
 /sbin/chkconfig rpcgssd on 
 /sbin/service rpcgssd start 
+
+chkconfig sssd on
+service sssd start
 
 useradd -a -G wheel soh516
 useradd -a -G wheel ijm451
