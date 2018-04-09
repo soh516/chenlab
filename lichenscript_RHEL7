@@ -105,6 +105,8 @@ systemctl enable yum-cron
 #latest virtuoso
 #yum -y install openssl098e-0.9.8e-20.el6_7.1.i686 (NA)
 #yum -y install openssl098e-0.9.8e-20.el6_7.1 (NA)
+yum -y install openssl098e.i686
+yum -y install openssl098e
 
 # simulation issue
 yum -y install elfutils-devel
