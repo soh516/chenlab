@@ -1,0 +1,124 @@
+#!/bin/bash
+
+if grep -q ONBOOT=no /etc/sysconfig/network-scripts/ifcfg-eno1; then
+sed -i -e 's/ONBOOT=no/ONBOOT=yes/g' /etc/sysconfig/network-scripts/ifcfg-eno0
+fi
+
+
+
+# disable user list at login
+touch /etc/dconf/db/gdm.d/01-custom-gdm-settings
+
+echo "[org/gnome/login-screen]" > /etc/dconf/db/gdm.d/01-custom-gdm-settings
+echo "disable-user-list=true" >> /etc/dconf/db/gdm.d/01-custom-gdm-settings
+dconf update
+
+# install packages for nfs and sssd 
+yum -y install nfs-utils samba sssd-ad sssd-krb5 sssd-ldap cyrus-sasl-gssapi
+yum -y install sssd-client.i686
+
+# kerberos
+authconfig --enablekrb5 --update --krb5realm=USASK.CA --krb5kdc=usaskdc5.usask.ca,usaskdc2.usask.ca,usaskdc6.usask.ca
+
+# mount home and cmc
+if [ ! -d "/CMC" ]; then
+   mkdir /CMC
+fi
+
+echo "engrcmc.usask.ca:/CMC   /CMC                    nfs     defaults,_netdev   0  0" >> /etc/fstab
+echo "nfsfiles.usask.ca:/home /home nfs sec=krb5,exec,vers=3,_netdev 0 0" >> /etc/fstab
+
+\cp ./lichenconffiles/smb.conf /etc/samba/
+\cp ./lichenconffiles/sssd.conf /etc/sssd/
+\cp ./lichenconffiles/profile /etc/
+\cp ./lichenconffiles/nsswitch.conf /etc/
+\cp ./lichenconffiles/idmapd.conf /etc/
+
+chmod 0700 /etc/sssd/sssd.conf
+
+hn=$(hostname) 
+#added in case hostname comes up with usask.ca or USASK.CA
+if [[ $hn == *"usask.ca"* ]]
+then
+  hn=${hn//.usask.ca/}
+elif [[ $hn == *"USASK.CA"* ]];
+then
+  hn=${hn//.USASK.CA/}
+fi
+nmcli general hostname $hn
+systemctl restart systemd-hostnamed
+net ads join -U soh516 createcomputer=ResearchComputingOU/ENGRCMCOU
+
+echo "SECURE_NFS="yes"" >> /etc/sysconfig/nfs
+
+systemctl enable nfs-client.target 
+systemctl start nfs-client.target
+systemctl enable sssd.service 
+systemctl start sssd.service 
+sleep 5
+systemctl restart sssd.service
+
+mount -a
+
+usermod -a -G wheel soh516
+usermod -a -G wheel ijm451
+
+# install packages
+#cadence (Experience from RH6)
+yum -y install glibc.i686
+yum -y install libXt.i686
+yum -y install libXext.i686
+yum -y install libXp.i686
+yum -y install libXp.x86_64
+yum -y install xorg-x11-fonts-ISO8859-1-75dpi
+yum -y install ksh
+#yum -y install compat-libtermcap (NA) 
+#yum -y install compat-libtermcap.i686 (NA)
+yum -y install compat-libstdc++-33
+#yum -y install compat-readline5.x86_64 (NA)
+yum -y install libgcc.i686
+
+#synopsys (Experience from RH7)
+yum -y install ncurses-libs.i686
+yum -y install libXrender.i686
+yum -y install libXrandr.i686
+yum -y install libXi.i686
+yum -y install fontconfig.i686
+
+#dc shell and vcs (Experience from RH7)
+yum -y install zlib.i686
+yum -y install glibc-devel.i686
+
+#dc shell (Experience from RH6)
+#yum -y install libXft-2.3.2-1.el6.i686 (NA)
+#yum -y install libjpeg-turbo-1.2.1-3.el6_5.i686 (NA)
+#yum -y install 2:libpng-1.2.49-2.el6_7.i686 (NA)
+
+#extra
+yum -y install cpp.x86_64
+
+#yum-cron
+yum -y install yum-cron
+systemctl start yum-cron
+systemctl enable yum-cron
+
+#latest virtuoso
+#yum -y install openssl098e-0.9.8e-20.el6_7.1.i686 (NA)
+#yum -y install openssl098e-0.9.8e-20.el6_7.1 (NA)
+
+# simulation issue
+yum -y install elfutils-devel
+yum -y install elfutils-devel.i686
+
+# kicad
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+rpm -Uvh epel-release-latest-7.noarch.rpm
+rm -f epel-release-latest-7.noarch.rpm
+yum -y install kicad
+
+
+# do followings manually
+# check /etc/fstab. There is a home sometime. Uncomment it
+# mount -a
+# edit /etc/sudoers for no passwd 
+# edit /etc/group for cmc stuff
