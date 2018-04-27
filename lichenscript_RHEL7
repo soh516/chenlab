@@ -99,6 +99,8 @@ yum -y install libpng.i686
 
 #extra
 yum -y install cpp.x86_64
+yum -y install gcc
+yum -y install gcc-c++
 
 #yum-cron
 yum -y install yum-cron
