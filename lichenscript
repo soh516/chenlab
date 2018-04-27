@@ -54,6 +54,8 @@ yum -y install 2:libpng-1.2.49-2.el6_7.i686
 
 #extra
 yum -y install cpp.x86_64
+yum -y install gcc
+yum -y install gcc-c++
 
 #yum-cron
 yum -y install yum-cron
