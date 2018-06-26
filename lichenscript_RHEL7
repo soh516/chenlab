@@ -121,6 +121,10 @@ yum -y install openssl098e
 yum -y install elfutils-devel
 yum -y install elfutils-devel.i686
 
+# tcad issue
+yum -y install fftw
+yum -y install libXaw
+
 # kicad
 wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 rpm -Uvh epel-release-latest-7.noarch.rpm
