@@ -78,6 +78,8 @@ yum -y install elfutils-devel.i686
 yum -y install fftw
 yum -y install libXaw
 
+# tfit issue
+yum -y install libXScrnSaver.i686
 
 \cp ./lichenconffiles/smb.conf /etc/samba/
 \cp ./lichenconffiles/sssd.conf /etc/sssd/
