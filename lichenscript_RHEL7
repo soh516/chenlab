@@ -137,6 +137,9 @@ yum -y install compat-libtiff3-3.9.4-11.el7.x86_64
 yum -y install libmng
 yum -y install libpng12
 
+# tfit issue
+yum -y install libXScrnSaver.i686
+
 ## display hostname on lock screen###############################
 touch /etc/dconf/profile/gdm
 echo "user-db:user" > /etc/dconf/profile/gdm
