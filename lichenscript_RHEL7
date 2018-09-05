@@ -132,8 +132,8 @@ rm -f epel-release-latest-7.noarch.rpm
 yum -y install kicad
 
 # dc_shell issue when working with Hao
-yum -y install libXScrnSaver-1.2.2-6.1.el7
-yum -y install compat-libtiff3-3.9.4-11.el7.x86_64
+yum -y install libXScrnSaver
+yum -y install compat-libtiff3
 yum -y install libmng
 yum -y install libpng12
 
