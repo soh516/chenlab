@@ -140,6 +140,8 @@ yum -y install libpng12
 # tfit issue
 yum -y install libXScrnSaver.i686
 
+yum -y install gnuplot
+
 ## display hostname on lock screen###############################
 touch /etc/dconf/profile/gdm
 echo "user-db:user" > /etc/dconf/profile/gdm
