@@ -81,6 +81,8 @@ yum -y install libXaw
 # tfit issue
 yum -y install libXScrnSaver.i686
 
+yum -y install gnuplot
+
 \cp ./lichenconffiles/smb.conf /etc/samba/
 \cp ./lichenconffiles/sssd.conf /etc/sssd/
 \cp ./lichenconffiles/profile /etc/
