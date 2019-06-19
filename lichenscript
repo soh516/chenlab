@@ -57,6 +57,8 @@ yum -y install cpp.x86_64
 yum -y install gcc
 yum -y install gcc-c++
 
+yum -y install mesa-dri-drivers.i686 mesa-dri-filesystem.i686 mesa-libGL.i686 mesa-libGLU.i686 mesa-private-llvm.i686
+
 #yum-cron
 yum -y install yum-cron
 chkconfig yum-cron on
